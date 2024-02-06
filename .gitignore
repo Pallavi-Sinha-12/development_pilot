@@ -1,0 +1,4 @@
+venv/
+development_ops_team/__pycache__/
+.talismanrc
+.DS_Store
