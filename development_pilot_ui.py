@@ -1,3 +1,12 @@
+"""
+This script is the Streamlit UI for the Development Pilot tool, which is an AI-powered platform designed to assist in step-by-step business feature development.
+The UI allows users to interact with different agents such as Business Analyst, Subject Matter Expert, Requirement Analyst, and Quality Assurance.
+Users can input business context, select a business domain and then :
+1. Generate requirement questions using the Business Analyst agent.
+2. Get answers to the requirement questions using the Subject Matter Expert agent.
+3. Generate requirement rules, acceptance criteria, and user flows using the Requirement Analyst agent.
+4. Generate test cases using the Quality Assurance agent.
+"""
 import streamlit as st
 import os
 from development_ops_team.BusinessAnalystAgent import BusinessAnalystAgent
@@ -5,32 +14,40 @@ from development_ops_team.SubjectMatterExpertAgent import SubjectMatterExpertAge
 from development_ops_team.RequirementAnalystAgent import RequirementAnalystAgent
 from development_ops_team.QualityAssuranceAgent import QualityAssuranceAgent
 
+# List of available business domains
 domains = ["Agriculture & Mining", "Automotive", "Business Services", "Computers & Electronics", "Consumer Services", "Education", "Energy & Utilities", "Engineering, Research & Development", "Financial Services", "Government", "Healthcare, Pharmaceuticals & Biotechnology", "Insurance", "Manufacturing", "Media, Publishing & Entertainment", "Non-Profit", "Payments Systems", "Real Estate & Construction", "Retail", "Software & Internet", "Telecommunications", "Transportation & Storage", "Travel, Recreation & Leisure", "Wholesale & Distribution"]
+
+# Check if business_domain is set in session_state, if not set it to the first domain in the list
 if "business_domain" not in st.session_state:
     st.session_state.business_domain_index = 0
+
+# Sidebar title
 st.sidebar.title("Development Pilot 🚀")
 
+# Sidebar welcome message
 st.sidebar.markdown("""
     Welcome to Development Pilot, your AI-powered team for step by step business feature development.
 """)
 
-
+# Check if OpenAI API key is set in session_state, if not set it to False
 if "is_openai_api_key_set" not in st.session_state:
     st.session_state.is_openai_api_key_set = False
 
+# Input field for OpenAI API key
 openai_api_key = st.sidebar.text_input("Enter your OpenAI API Key", type="password")
-if st.sidebar.button("Set OpenAI API Key"):
 
+# Button to set OpenAI API key
+if st.sidebar.button("Set OpenAI API Key"):
     st.session_state.openai_api_key = openai_api_key
     os.environ["OPENAI_API_KEY"] = st.session_state.openai_api_key
     st.sidebar.success("OpenAI API Key successfully set!")
     st.session_state.is_openai_api_key_set = True
 
-
+# Check if OpenAI API key is set
 if st.session_state.is_openai_api_key_set:
-
     st.sidebar.markdown("---")
 
+    # Project Overview section in sidebar
     st.sidebar.subheader("Project Overview")
 
     st.sidebar.markdown(
@@ -49,9 +66,10 @@ if st.session_state.is_openai_api_key_set:
 
     st.sidebar.markdown("© 2024 Development Pilot. All rights reserved.")
 
+    # Tabs for different agents
     tab1, tab2, tab3, tab4 = st.tabs(["Business Analyst (BA) 📈", "Subject Matter Expert (SME) 🧠", "Requirement Analyst (RA) 📝", "Quality Assurance (QA) 🕵️‍♂️"])
 
-
+    # Business Analyst tab
     with tab1:
         st.header("Business Analyst (BA) 📈")
         business_context = st.text_area("Enter Business Context for the new feature:", height=300)
@@ -80,7 +98,8 @@ if st.session_state.is_openai_api_key_set:
             )
 
             st.info("To interact with the Subject Matter Expert, click on the next tab.")
-    
+
+    # Subject Matter Expert tab
     with tab2:
         st.header("Subject Matter Expert (SME) 🧠")
         requirement_questions_to_SME = st.text_area("Enter Requirement Questions from the BA:", value=st.session_state.requirement_questions if "requirement_questions" in st.session_state else '', height=300)
@@ -112,6 +131,7 @@ if st.session_state.is_openai_api_key_set:
 
             st.info("To interact with the Requirement Analyst, click on the next tab.")
 
+    # Requirement Analyst tab
     with tab3:
         st.header("Requirement Analyst (RA) 📝")
         sme_reqirements_response_to_RA = st.text_area("Enter Requirement Responses from the SME:", value=st.session_state.sme_reqirements_response if "sme_reqirements_response" in st.session_state else '', height=300)
@@ -142,6 +162,8 @@ if st.session_state.is_openai_api_key_set:
             )
 
             st.info("To interact with the Quality Assurance, click on the next tab.")
+
+    # Quality Assurance tab
     with tab4:
         st.header("Quality Assurance (QA) 🕵️‍♂️")
         requirement_rules_to_QA = st.text_area("Enter Requirement rules, acceptance criteria and user flows from the RA:", value=st.session_state.requirement_rules if "requirement_rules" in st.session_state else '', height=300)

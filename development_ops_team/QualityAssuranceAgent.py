@@ -1,9 +1,26 @@
 from development_ops_team.DevelopmentAgent import DevelopmentAgent
 
 class QualityAssuranceAgent(DevelopmentAgent):
-
-    def __init__(self, domain, model_name = "gpt-4-1106-preview") -> None:
-
+    """
+    Represents a Quality Assurance Agent responsible for generating rigorous test scenarios and crafting comprehensive test cases.
+    
+    Attributes:
+        domain (str): The domain of expertise for the Quality Assurance Agent.
+        model_name (str): The name of the model used by the Quality Assurance Agent.
+    
+    Methods:
+        ask(self, query): Asks a question to the Quality Assurance Agent's assistant and returns the extracted value.
+    """
+    
+    def __init__(self, domain : str, model_name  : str = "gpt-4-1106-preview"):
+        """
+        Initializes a QualityAssuranceAgent object.
+        
+        Args:
+            domain (str): The domain of expertise for the Quality Assurance Agent.
+            model_name (str): The name of the model used by the Quality Assurance Agent.
+        """
+        
         self.domain = domain
         self.model_name = model_name
         
@@ -32,6 +49,16 @@ class QualityAssuranceAgent(DevelopmentAgent):
 
 
     def ask(self, query : str) -> str:
+        """
+        Asks a question to the Quality Assurance Agent and returns the reply from the assistant.
+        
+        Args:
+            query (str): The question to ask the assistant.
+        
+        Returns:
+            str: The reply for the specified query from the assistant.
+        """
+        
         assistant = self.create_assistant()
         extracted_value = self.invoke(assistant, query)
         return extracted_value

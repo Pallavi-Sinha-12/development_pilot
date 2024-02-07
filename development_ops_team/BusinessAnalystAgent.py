@@ -1,9 +1,25 @@
 from development_ops_team.DevelopmentAgent import DevelopmentAgent
 
 class BusinessAnalystAgent(DevelopmentAgent):
+    """
+    Represents a Business Analyst Agent responsible for translating business needs into precise requirement questions.
 
-    def __init__(self, domain, model_name = "gpt-4-1106-preview"):
+    Attributes:
+        domain (str): The domain in which the Business Analyst specializes.
+        model_name (str): The name of the model used by the agent.
 
+    Methods:
+        ask(self, query: str) -> str: Asks a question to the assistant and returns the extracted value.
+    """
+
+    def __init__(self, domain: str, model_name: str = "gpt-4-1106-preview"):
+        """
+        Initializes a BusinessAnalystAgent object.
+
+        Args:
+            domain (str): The domain in which the Business Analyst specializes.
+            model_name (str, optional): The name of the model used by the agent. Defaults to "gpt-4-1106-preview".
+        """
         self.domain = domain
         agent_role = "Business Analyst"
         agent_backstory = f"""
@@ -21,8 +37,16 @@ class BusinessAnalystAgent(DevelopmentAgent):
 
         super().__init__(agent_role, agent_backstory, tools, self.model_name)
 
+    def ask(self, query: str) -> str:
+        """
+        Asks a question to the Business Analyst Agent and returns the reply.
 
-    def ask(self, query : str) -> str:
+        Args:
+            query (str): The question to ask the assistant.
+
+        Returns:
+            str: The reply for the specified query.
+        """
         assistant = self.create_assistant()
         extracted_value = self.invoke(assistant, query)
         return extracted_value

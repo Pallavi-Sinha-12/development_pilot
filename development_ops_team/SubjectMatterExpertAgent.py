@@ -1,9 +1,29 @@
 from development_ops_team.DevelopmentAgent import DevelopmentAgent
 
 class SubjectMatterExpertAgent(DevelopmentAgent):
+    """
+    Represents a Subject Matter Expert agent that provides comprehensive answers to requirement questions specific to a domain of expertise.
 
-    def __init__(self, domain, model_name = "gpt-4-1106-preview"):
+    Args:
+        domain (str): The domain of expertise for the agent.
+        model_name (str, optional): The name of the model to be used by the agent. Defaults to "gpt-4-1106-preview".
 
+    Attributes:
+        domain (str): The domain of expertise for the agent.
+        model_name (str): The name of the model used by the agent.
+
+    Methods:
+        ask(self, query): Asks the agent a question and returns the reply.
+    """
+
+    def __init__(self, domain : str, model_name : str = "gpt-4-1106-preview"):
+        """
+        Initializes a new instance of the SubjectMatterExpertAgent class.
+
+        Args:
+            domain (str): The domain of expertise for the agent.
+            model_name (str, optional): The name of the model to be used by the agent. Defaults to "gpt-4-1106-preview".
+        """
         self.domain = domain
         self.model_name = model_name
         
@@ -24,6 +44,15 @@ class SubjectMatterExpertAgent(DevelopmentAgent):
 
 
     def ask(self, query : str) -> str:
+        """
+        Asks the Subject Matter Expert agent a question and returns the reply.
+
+        Args:
+            query (str): The question to ask the agent.
+
+        Returns:
+            str: The reply for the specified query from the agent.
+        """
         assistant = self.create_assistant()
         extracted_value = self.invoke(assistant, query)
         return extracted_value

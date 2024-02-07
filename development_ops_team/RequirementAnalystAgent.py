@@ -1,9 +1,25 @@
 from development_ops_team.DevelopmentAgent import DevelopmentAgent
 
 class RequirementAnalystAgent(DevelopmentAgent):
+    """
+    Represents a Requirement Analyst Agent responsible for translating business needs into requirement rules, acceptance criteria, and user flows.
 
-    def __init__(self, domain, model_name = "gpt-4-1106-preview"):
+    Attributes:
+        domain (str): The domain in which the Requirement Analyst specializes.
+        model_name (str): The name of the language model to be used by the agent.
 
+    Methods:
+        ask(self, query: str) -> str: Asks a question to the assistant and returns the extracted value.
+    """
+
+    def __init__(self, domain : str, model_name : str = "gpt-4-1106-preview"):
+        """
+        Initializes a RequirementAnalystAgent object.
+
+        Args:
+            domain (str): The domain in which the Requirement Analyst specializes.
+            model_name (str, optional): The name of the language model to be used by the agent. Defaults to "gpt-4-1106-preview".
+        """
         self.domain = domain
         agent_role = "Requirement Analyst"
         agent_backstory = f"""
@@ -19,8 +35,16 @@ class RequirementAnalystAgent(DevelopmentAgent):
 
         super().__init__(agent_role, agent_backstory, tools, self.model_name)
 
+    def ask(self, query: str) -> str:
+        """
+        Asks a question to the Requirement Analyst Agent and returns the reply.
 
-    def ask(self, query : str) -> str:
+        Args:
+            query (str): The question to ask the Requirement Analyst Agent.
+
+        Returns:
+            str: The reply for the specified query from the assistant.
+        """
         assistant = self.create_assistant()
         extracted_value = self.invoke(assistant, query)
         return extracted_value
