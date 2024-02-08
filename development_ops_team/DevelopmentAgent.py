@@ -1,6 +1,7 @@
 from langchain.agents.openai_assistant import OpenAIAssistantRunnable
 from typing import Any
 
+
 class DevelopmentAgent:
     """
     Represents a development agent that interacts with an OpenAI assistant.
@@ -18,7 +19,13 @@ class DevelopmentAgent:
         invoke(self, assistant, query): Invokes the OpenAI assistant with the specified query and returns the extracted reply.
     """
 
-    def __init__(self, agent_role : str, agent_backstory : str, tools : list = [], model_name : str = "gpt-4-1106-preview"):
+    def __init__(
+        self,
+        agent_role: str,
+        agent_backstory: str,
+        tools: list = [],
+        model_name: str = "gpt-4-1106-preview",
+    ):
         """
         Initializes a new instance of the DevelopmentAgent class.
 
@@ -46,7 +53,7 @@ class DevelopmentAgent:
             tools=self.tools,
             model=self.model_name,
         )
-    
+
     def extract_value(self, assistant_output: list) -> str:
         """
         Extracts the reply from the OpenAI assistant's output.
@@ -60,9 +67,11 @@ class DevelopmentAgent:
         raw_output = str(assistant_output)
         start_index = raw_output.find("value=") + len("value=")
         end_index = raw_output.find(", type='text')")
-        extracted_value = raw_output[start_index:end_index].strip().lstrip('"').rstrip('"').strip(")")
+        extracted_value = (
+            raw_output[start_index:end_index].strip().lstrip('"').rstrip('"').strip(")")
+        )
         return extracted_value
-            
+
     def invoke(self, assistant: OpenAIAssistantRunnable, query: str) -> str:
         """
         Invokes the OpenAI assistant with the specified query and returns the extracted value.

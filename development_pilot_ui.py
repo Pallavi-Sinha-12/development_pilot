@@ -7,6 +7,7 @@ Users can input business context, select a business domain and then :
 3. Generate requirement rules, acceptance criteria, and user flows using the Requirement Analyst agent.
 4. Generate test cases using the Quality Assurance agent.
 """
+
 import streamlit as st
 import os
 from development_ops_team.BusinessAnalystAgent import BusinessAnalystAgent
@@ -15,7 +16,31 @@ from development_ops_team.RequirementAnalystAgent import RequirementAnalystAgent
 from development_ops_team.QualityAssuranceAgent import QualityAssuranceAgent
 
 # List of available business domains
-domains = ["Agriculture & Mining", "Automotive", "Business Services", "Computers & Electronics", "Consumer Services", "Education", "Energy & Utilities", "Engineering, Research & Development", "Financial Services", "Government", "Healthcare, Pharmaceuticals & Biotechnology", "Insurance", "Manufacturing", "Media, Publishing & Entertainment", "Non-Profit", "Payments Systems", "Real Estate & Construction", "Retail", "Software & Internet", "Telecommunications", "Transportation & Storage", "Travel, Recreation & Leisure", "Wholesale & Distribution"]
+domains = [
+    "Agriculture & Mining",
+    "Automotive",
+    "Business Services",
+    "Computers & Electronics",
+    "Consumer Services",
+    "Education",
+    "Energy & Utilities",
+    "Engineering, Research & Development",
+    "Financial Services",
+    "Government",
+    "Healthcare, Pharmaceuticals & Biotechnology",
+    "Insurance",
+    "Manufacturing",
+    "Media, Publishing & Entertainment",
+    "Non-Profit",
+    "Payments Systems",
+    "Real Estate & Construction",
+    "Retail",
+    "Software & Internet",
+    "Telecommunications",
+    "Transportation & Storage",
+    "Travel, Recreation & Leisure",
+    "Wholesale & Distribution",
+]
 
 # Check if business_domain is set in session_state, if not set it to the first domain in the list
 if "business_domain" not in st.session_state:
@@ -25,9 +50,11 @@ if "business_domain" not in st.session_state:
 st.sidebar.title("Development Pilot 🚀")
 
 # Sidebar welcome message
-st.sidebar.markdown("""
+st.sidebar.markdown(
+    """
     Welcome to Development Pilot, your AI-powered team for step by step business feature development.
-""")
+"""
+)
 
 # Check if OpenAI API key is set in session_state, if not set it to False
 if "is_openai_api_key_set" not in st.session_state:
@@ -67,60 +94,105 @@ if st.session_state.is_openai_api_key_set:
     st.sidebar.markdown("© 2024 Development Pilot. All rights reserved.")
 
     # Tabs for different agents
-    tab1, tab2, tab3, tab4 = st.tabs(["Business Analyst (BA) 📈", "Subject Matter Expert (SME) 🧠", "Requirement Analyst (RA) 📝", "Quality Assurance (QA) 🕵️‍♂️"])
+    tab1, tab2, tab3, tab4 = st.tabs(
+        [
+            "Business Analyst (BA) 📈",
+            "Subject Matter Expert (SME) 🧠",
+            "Requirement Analyst (RA) 📝",
+            "Quality Assurance (QA) 🕵️‍♂️",
+        ]
+    )
 
     # Business Analyst tab
     with tab1:
         st.header("Business Analyst (BA) 📈")
-        business_context = st.text_area("Enter Business Context for the new feature:", height=300)
-        business_domain = st.selectbox("Select Business Domain:", domains, index=st.session_state.business_domain_index, key='business_domain_tab1')
+        business_context = st.text_area(
+            "Enter Business Context for the new feature:", height=300
+        )
+        business_domain = st.selectbox(
+            "Select Business Domain:",
+            domains,
+            index=st.session_state.business_domain_index,
+            key="business_domain_tab1",
+        )
         st.session_state.business_context = business_context
         st.session_state.business_domain = business_domain
         st.session_state.business_domain_index = domains.index(business_domain)
         if st.button("Generate Requirement Questions"):
-            businessAnalystAgent = BusinessAnalystAgent(st.session_state.business_domain)
-            question_to_BA = fr""" The following is the business context for the new feature: {st.session_state.business_context}.
+            businessAnalystAgent = BusinessAnalystAgent(
+                st.session_state.business_domain
+            )
+            question_to_BA = rf""" The following is the business context for the new feature: {st.session_state.business_context}.
             Please generate requirement questions for the given business context by considering the domain of the business you are working in.
             """
             with st.spinner("Generating requirement questions..."):
                 requirement_questions = businessAnalystAgent.ask(question_to_BA)
-            st.session_state.requirement_questions = requirement_questions.replace("\\n", "\n")
+            st.session_state.requirement_questions = requirement_questions.replace(
+                "\\n", "\n"
+            )
             st.success("Requirement questions generated successfully! ✔️")
 
         if "requirement_questions" in st.session_state:
-            st.markdown(f"**Requirement Questions 🤔:** {st.session_state.requirement_questions}", unsafe_allow_html=True)
+            st.markdown(
+                f"**Requirement Questions 🤔:** {st.session_state.requirement_questions}",
+                unsafe_allow_html=True,
+            )
 
             st.download_button(
                 label="Download Requirement Questions",
-                data= st.session_state.requirement_questions,
+                data=st.session_state.requirement_questions,
                 file_name="requirement_questions.txt",
                 mime="text/markdown",
             )
 
-            st.info("To interact with the Subject Matter Expert, click on the next tab.")
+            st.info(
+                "To interact with the Subject Matter Expert, click on the next tab."
+            )
 
     # Subject Matter Expert tab
     with tab2:
         st.header("Subject Matter Expert (SME) 🧠")
-        requirement_questions_to_SME = st.text_area("Enter Requirement Questions from the BA:", value=st.session_state.requirement_questions if "requirement_questions" in st.session_state else '', height=300)
+        requirement_questions_to_SME = st.text_area(
+            "Enter Requirement Questions from the BA:",
+            value=(
+                st.session_state.requirement_questions
+                if "requirement_questions" in st.session_state
+                else ""
+            ),
+            height=300,
+        )
         if "requirement_questions" in st.session_state:
-            st.info("The requirement questions generated by the Business Analyst are pasted here. Feel free to edit the questions if needed.")
-        business_domain = st.selectbox("Select Business Domain:", domains, index=st.session_state.business_domain_index, key='business_domain_tab2' )
+            st.info(
+                "The requirement questions generated by the Business Analyst are pasted here. Feel free to edit the questions if needed."
+            )
+        business_domain = st.selectbox(
+            "Select Business Domain:",
+            domains,
+            index=st.session_state.business_domain_index,
+            key="business_domain_tab2",
+        )
         st.session_state.business_domain = business_domain
         st.session_state.business_domain_index = domains.index(business_domain)
         st.session_state.requirement_questions_to_SME = requirement_questions_to_SME
         if st.button("Answer Requirement Questions"):
-            subjectMatterExpertAgent = SubjectMatterExpertAgent(st.session_state.business_domain)
+            subjectMatterExpertAgent = SubjectMatterExpertAgent(
+                st.session_state.business_domain
+            )
             question_to_SME = f""" The following are the requirement questions asked by the Business Analyst: {st.session_state.requirement_questions_to_SME}. For each question, try to be informative and clear in your answers. 
             For your reference, the new business feature context is as follows: {st.session_state.business_context}. Your answers should contain only the information that is relevant to the questions asked.
             """
             with st.spinner("Answering requirement questions..."):
                 sme_reqirements_response = subjectMatterExpertAgent.ask(question_to_SME)
-            st.session_state.sme_reqirements_response = sme_reqirements_response.replace("\\n", "\n")
+            st.session_state.sme_reqirements_response = (
+                sme_reqirements_response.replace("\\n", "\n")
+            )
             st.success("Requirement questions answered successfully by SME! ✔️ ")
 
         if "sme_reqirements_response" in st.session_state:
-            st.markdown(f"**SME Requirement Responses 💡:** {st.session_state.sme_reqirements_response}", unsafe_allow_html=True)
+            st.markdown(
+                f"**SME Requirement Responses 💡:** {st.session_state.sme_reqirements_response}",
+                unsafe_allow_html=True,
+            )
 
             st.download_button(
                 label="Download SME Requirement Responses",
@@ -134,15 +206,32 @@ if st.session_state.is_openai_api_key_set:
     # Requirement Analyst tab
     with tab3:
         st.header("Requirement Analyst (RA) 📝")
-        sme_reqirements_response_to_RA = st.text_area("Enter Requirement Responses from the SME:", value=st.session_state.sme_reqirements_response if "sme_reqirements_response" in st.session_state else '', height=300)
+        sme_reqirements_response_to_RA = st.text_area(
+            "Enter Requirement Responses from the SME:",
+            value=(
+                st.session_state.sme_reqirements_response
+                if "sme_reqirements_response" in st.session_state
+                else ""
+            ),
+            height=300,
+        )
         if "sme_reqirements_response" in st.session_state:
-            st.info("The requirement responses from the Subject Matter Expert are pasted here. Feel free to edit the responses if needed.")
+            st.info(
+                "The requirement responses from the Subject Matter Expert are pasted here. Feel free to edit the responses if needed."
+            )
         st.session_state.sme_reqirements_response_to_RA = sme_reqirements_response_to_RA
-        business_domain = st.selectbox("Select Business Domain:", domains, index=st.session_state.business_domain_index, key='business_domain_tab3')
+        business_domain = st.selectbox(
+            "Select Business Domain:",
+            domains,
+            index=st.session_state.business_domain_index,
+            key="business_domain_tab3",
+        )
         st.session_state.business_domain = business_domain
         st.session_state.business_domain_index = domains.index(business_domain)
         if st.button("Generate Requirement Rules"):
-            requirementAnalystAgent = RequirementAnalystAgent(st.session_state.business_domain)
+            requirementAnalystAgent = RequirementAnalystAgent(
+                st.session_state.business_domain
+            )
             question_to_RA = f""" The following are the requirement responses from the Subject Matter Expert: {st.session_state.sme_reqirements_response_to_RA}.
             Based on the requirement responses, define detailed requirement rules, acceptance criteria and user flows for the new business feature.
             """
@@ -152,8 +241,11 @@ if st.session_state.is_openai_api_key_set:
             st.success("Requirement rules generated successfully by RA! ✔️")
 
         if "requirement_rules" in st.session_state:
-            st.markdown(f"**Requirement Rules 📝:** {st.session_state.requirement_rules}", unsafe_allow_html=True)
-            
+            st.markdown(
+                f"**Requirement Rules 📝:** {st.session_state.requirement_rules}",
+                unsafe_allow_html=True,
+            )
+
             st.download_button(
                 label="Download Requirement Rules",
                 data=st.session_state.requirement_rules,
@@ -166,15 +258,32 @@ if st.session_state.is_openai_api_key_set:
     # Quality Assurance tab
     with tab4:
         st.header("Quality Assurance (QA) 🕵️‍♂️")
-        requirement_rules_to_QA = st.text_area("Enter Requirement rules, acceptance criteria and user flows from the RA:", value=st.session_state.requirement_rules if "requirement_rules" in st.session_state else '', height=300)
+        requirement_rules_to_QA = st.text_area(
+            "Enter Requirement rules, acceptance criteria and user flows from the RA:",
+            value=(
+                st.session_state.requirement_rules
+                if "requirement_rules" in st.session_state
+                else ""
+            ),
+            height=300,
+        )
         if "requirement_rules" in st.session_state:
-            st.info("The requirement rules, acceptance criteria and user flows from the Requirement Analyst are pasted here. Feel free to edit the requirement rules if needed.")
+            st.info(
+                "The requirement rules, acceptance criteria and user flows from the Requirement Analyst are pasted here. Feel free to edit the requirement rules if needed."
+            )
         st.session_state.requirement_rules_to_QA = requirement_rules_to_QA
-        business_domain = st.selectbox("Select Business Domain:", domains, index=st.session_state.business_domain_index, key='business_domain_tab4')
+        business_domain = st.selectbox(
+            "Select Business Domain:",
+            domains,
+            index=st.session_state.business_domain_index,
+            key="business_domain_tab4",
+        )
         st.session_state.business_domain = business_domain
         st.session_state.business_domain_index = domains.index(business_domain)
         if st.button("Generate Test Cases"):
-            qualityAssuranceAgent = QualityAssuranceAgent(st.session_state.business_domain)
+            qualityAssuranceAgent = QualityAssuranceAgent(
+                st.session_state.business_domain
+            )
             question_to_QA = f""" The following are the requirement rules, acceptance criteria and user flows for the new business feature from Requirement Analyst: {st.session_state.requirement_rules_to_QA}.
             The business feature context is as follows: {st.session_state.business_context}.
             Generate test scenarios for the given business feature and given requirement rules and acceptance criteria.
@@ -185,16 +294,21 @@ if st.session_state.is_openai_api_key_set:
             st.success("Test cases generated successfully by QA! ✔️")
 
         if "test_cases" in st.session_state:
-            st.markdown(f"**Test Cases 🧪:** {st.session_state.test_cases}", unsafe_allow_html=True)
-            
+            st.markdown(
+                f"**Test Cases 🧪:** {st.session_state.test_cases}",
+                unsafe_allow_html=True,
+            )
+
             st.download_button(
                 label="Download Test Cases",
                 data=st.session_state.test_cases,
                 file_name="test_cases.txt",
                 mime="text/markdown",
             )
-            
-            st.info("Feel free to copy the generated test cases and use them for your development of the business feature. Happy coding! 🚀")
+
+            st.info(
+                "Feel free to copy the generated test cases and use them for your development of the business feature. Happy coding! 🚀"
+            )
 
 else:
     st.warning("Please enter your OpenAI API key to get started.")

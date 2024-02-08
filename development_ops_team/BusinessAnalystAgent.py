@@ -1,5 +1,6 @@
 from development_ops_team.DevelopmentAgent import DevelopmentAgent
 
+
 class BusinessAnalystAgent(DevelopmentAgent):
     """
     Represents a Business Analyst Agent responsible for translating business needs into precise requirement questions.
